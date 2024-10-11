@@ -1,0 +1,323 @@
+﻿openapi: 3.0.1
+info:
+  title: msk.ivanor test api
+  version: '1'
+servers:
+  - url: https://msk.ivanor.ru/front/service/test-api/v1
+paths:
+  /orders:
+    get:
+      tags:
+        - Список заказов
+      summary: Список заказов
+      parameters:
+        - name: Token
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          description: начало периода, формат YYYY-MM-DD
+          schema:
+            type: string
+        - name: dateTo
+          in: query
+          description: конец периода, формат YYYY-MM-DD
+          schema:
+            type: string
+        - name: orderStatus
+          in: query
+          description: >-
+            статус(ы) заказа в виде числа, если нужно указать несколько
+            статусов, то надо передать их через запятую, например '4,5,6'...
+            Варианты статусов заказа:  1 - Заказ обрабатывается, 2 - Заказ
+            обработан, 3 - Не хватило товара для резервирования,   4 - Заказ
+            выполнен, 5 - Заказ отменен, 6 - Заказ зарезервирован
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    orders:
+                      $ref: '#/components/schemas/orders'
+        '400':
+          description: некорректные данные в параметрах запроса
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: доступ запрещен
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: .
+          content:
+            text/plain:
+              schema:
+                type: string
+        '501':
+          description: .
+          content:
+            text/plain:
+              schema:
+                type: string
+        '503':
+          description: .
+          content:
+            text/plain:
+              schema:
+                type: string
+        '504':
+          description: .
+          content:
+            text/plain:
+              schema:
+                type: string
+  /order/{id}:
+    get:
+      tags:
+        - Детали заказа по его номеру
+      summary: Детали заказа по его номеру
+      parameters:
+        - name: Token
+          in: header
+          description: ''
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: идентификатор заказа
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: successful request
+          content:
+            '*/*':
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: '#/components/schemas/order'
+        '400':
+          description: некорректные данные в параметрах запроса
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: доступ запрещен
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: заказ не найден
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: .
+          content:
+            text/plain:
+              schema:
+                type: string
+        '501':
+          description: .
+          content:
+            text/plain:
+              schema:
+                type: string
+        '503':
+          description: .
+          content:
+            text/plain:
+              schema:
+                type: string
+        '504':
+          description: .
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  schemas:
+    orders:
+      type: array
+      items:
+        type: object
+        properties:
+          amount:
+            type: integer
+            description: сумма заказа
+          uid1c:
+            type: string
+            description: номер заказа в учетной системе
+          shipment:
+            type: object
+            description: способ и дата отгрузки заказа клиенту
+            properties:
+              date:
+                type: string
+                format: date
+                description: дата когда заказ будет готов к выдаче клиенту
+              method:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+          quantity:
+            type: integer
+            description: кол-во товара в заказе
+          shop:
+            type: object
+            description: точка выдачи (магазин)
+            properties:
+              id:
+                type: integer
+              title:
+                type: string
+          created:
+            type: string
+            description: дата-время создания заказа
+          client:
+            type: object
+            properties:
+              firstname:
+                type: string
+              phone:
+                type: string
+              lastname:
+                type: string
+          payment:
+            type: object
+            description: статус и выбранный способ оплаты заказа
+            properties:
+              method:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+              status:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+          id:
+            type: integer
+            description: уникальный id заказа
+          operator:
+            type: string
+            description: uid оператора который создал заказ
+          status:
+            type: object
+            description: статус заказа
+            properties:
+              id:
+                type: integer
+                description: >-
+                  0 - Неизвестный статус заказа, 1 - Заказ обрабатывается, 2 -
+                  Заказ обработан, 3 - Не хватило товара для резервирования, 4 -
+                  Заказ выполнен, 5 - Заказ отменен, 6 - Заказ зарезервирован
+              title:
+                type: string
+    order:
+      type: object
+      properties:
+        uid1c:
+          type: string
+        shipment:
+          type: object
+          properties:
+            date:
+              type: string
+              format: date
+            method:
+              type: object
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+        shop:
+          type: object
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+        created:
+          type: string
+        client:
+          type: object
+          properties:
+            firstname:
+              type: string
+            phone:
+              type: string
+            lastname:
+              type: string
+        payment:
+          type: object
+          properties:
+            method:
+              type: object
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+            status:
+              type: object
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+        id:
+          type: integer
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              quantity:
+                type: integer
+              price:
+                type: integer
+              id:
+                type: integer
+              title:
+                type: string
+              status:
+                type: string
+        operator:
+          type: string
+        status:
+          type: object
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+x-original-swagger-version: '2.0'
