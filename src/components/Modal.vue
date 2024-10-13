@@ -2,8 +2,8 @@
   <div class="modal">
     <div class="modal-content">
       <span class="close" @click="$emit('close')">&times;</span>
-      <slot name="header"></slot>
-      <slot name="body"></slot>
+      <slot name="header"> </slot>
+      <slot name="body"> </slot>
     </div>
   </div>
 </template>
